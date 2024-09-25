@@ -1,14 +1,17 @@
 const mongoose = require('mongoose')
-global.database = mongoose
 
 module.exports = () => {
-  const connectionString = process.env.DB_URL
-  const opts = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    bufferCommands: false,
-    dbName: process.env.DB_NAME
-  }
+  const mongoURI = process.env.DB_URL;
+  const options = {};
 
-  return global.database.connect(connectionString, opts)
+  // Connect to MongoDB
+  mongoose.connect(mongoURI, options)
+    .then(() => {
+      console.log('Connected to MongoDB');
+    })
+    .catch((error) => {
+      console.error('Error connecting to MongoDB:', error);
+    });
+
+  module.exports = mongoose;
 }
