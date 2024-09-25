@@ -1,22 +1,24 @@
 const userService = require('../services/userService');
+const { responseSuccess200, responseError400 } = require('../helpers/common');
 
 exports.register = async (req, res) => {
     try {
         const { name, email, password } = req.body;
         const token = await userService.registerUser(name, email, password);
 
-        res.status(201).json({ message: 'Đăng ký thành công', token });
+        return responseSuccess200(res, 'Đăng nhập thành công', { access_token: token });
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        return responseError400(res, error.message);
     }
 };
 
 exports.login = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const token = await userService.loginUser(email, password);
-        res.status(200).json({ message: 'Đăng nhập thành công', token });
+        const response = await userService.loginUser(email, password);
+
+        return responseSuccess200(res, 'Đăng nhập thành công', response);
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        return responseError400(res, error.message);
     }
 };
