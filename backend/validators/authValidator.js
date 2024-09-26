@@ -1,6 +1,6 @@
 const { body, validationResult } = require('express-validator');
 
-const userCreateValidator = [
+const register = [
   body('name')
     .isString().withMessage('Tên phải là một chuỗi')
     .isLength({ min: 2 }).withMessage('Tên phải có từ 2 ký tự'),
@@ -13,7 +13,7 @@ const userCreateValidator = [
     .isLength({ min: 6 }).withMessage('Mật khẩu phải có ít nhất 6 ký tự')
 ];
 
-const userLoginValidator = [
+const login = [
   body('email')
     .isEmail().withMessage('Email không hợp lệ'),
 
@@ -22,7 +22,16 @@ const userLoginValidator = [
     .isLength({ min: 6 }).withMessage('Mật khẩu phải có ít nhất 6 ký tự')
 ];
 
-const handleValidationErrors = (req, res, next) => {
+const verifyCode = [
+  body('email')
+    .isEmail().withMessage('Email không hợp lệ'),
+
+  body('code')
+    .isString().withMessage('Mã xác thực là một chuỗi')
+    .isLength({ min: 1 }).withMessage('Mã xác thực không được để trống')
+];
+
+const handleErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -31,7 +40,8 @@ const handleValidationErrors = (req, res, next) => {
 };
 
 module.exports = {
-  userLoginValidator,
-  userCreateValidator,
-  handleValidationErrors
+  login,
+  register,
+  handleErrors,
+  verifyCode
 };

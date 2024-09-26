@@ -34,6 +34,21 @@ const sendEmail = (to, subject, template, context) => {
   return transporter.sendMail(mailOptions);
 };
 
+const send2FACode = (to, context) => {
+  const template = 'send-2fa-code';
+  const subject = 'TCCN Registration Notice - Verification Code';
+  const mailOptions = {
+    from: process.env.MAIL_FROM,
+    to,
+    subject,
+    template,
+    context
+  };
+
+  return transporter.sendMail(mailOptions);
+};
+
 module.exports = {
-  sendEmail
+  sendEmail,
+  send2FACode
 };
