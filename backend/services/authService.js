@@ -42,7 +42,7 @@ exports.sendVerificationCode = async (email) => {
     const verifyCode = Math.floor(100000 + Math.random() * 900000);
     const expiredAt = new Date(Date.now() + 120 * 1000); // 2 minute
 
-    await User.findOneAndUpdate(
+    await VerifyCode.findOneAndUpdate(
         { email: email },
         { code: verifyCode, expiredAt: expiredAt },
         { new: true, upsert: true }
@@ -116,6 +116,24 @@ exports.changePasswordWithToken = async (token, newPassword) => {
 
     await User.findOneAndUpdate(
         { email: checkToken.email },
+        { password: newPassword },
+        { new: true }
+    );
+
+    return mailService.sendPasswordResetConfirmation(checkToken.email);
+}
+
+exports.changePassword = async (user, password, newPassword) => {
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+        throw new Error('Email hoặc mật khẩu không đúng');
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    newPassword = await bcrypt.hash(newPassword, salt);
+
+    await User.findOneAndUpdate(
+        { _id: user._id },
         { password: newPassword },
         { new: true }
     );

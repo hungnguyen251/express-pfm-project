@@ -14,5 +14,6 @@ router.post('/auth/login', authValidator.login, authValidator.handleErrors, auth
 router.post('/auth/verify-code', authValidator.verifyCode, authValidator.handleErrors, authController.verifyCode);
 router.post('/auth/password-reset-request', authValidator.passwordReset, authValidator.handleErrors, authController.passwordReset);
 router.post('/auth/password-reset-confirmation', authValidator.changePasswordWithToken, authValidator.handleErrors, authController.changePasswordWithToken);
+router.post('/auth/change-password', authMiddleware, authValidator.changePassword, authValidator.handleErrors, authController.changePassword);
 
 module.exports = router;

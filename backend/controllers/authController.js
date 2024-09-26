@@ -55,3 +55,15 @@ exports.changePasswordWithToken = async (req, res) => {
         return responseError400(res, error.message);
     }
 };
+
+exports.changePassword = async (req, res) => {
+    try {
+        const { password, new_password } = req.body;
+
+        await authService.changePassword(req.user, password, new_password);
+
+        return responseSuccess200(res, 'Thay đổi mật khẩu thành công');
+    } catch (error) {
+        return responseError400(res, error.message);
+    }
+};

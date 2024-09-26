@@ -46,6 +46,16 @@ const changePasswordWithToken = [
     .isLength({ min: 6 }).withMessage('Mật khẩu mới phải có ít nhất 6 ký tự')
 ];
 
+const changePassword = [
+  body('password')
+    .isString().withMessage('Mật khẩu mới phải là một chuỗi')
+    .isLength({ min: 6 }).withMessage('Mật khẩu mới phải có ít nhất 6 ký tự'),
+
+  body('new_password')
+    .isString().withMessage('Mật khẩu mới phải là một chuỗi')
+    .isLength({ min: 6 }).withMessage('Mật khẩu mới phải có ít nhất 6 ký tự')
+];
+
 const handleErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -60,5 +70,6 @@ module.exports = {
   handleErrors,
   verifyCode,
   passwordReset,
-  changePasswordWithToken
+  changePasswordWithToken,
+  changePassword
 };
