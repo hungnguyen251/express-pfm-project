@@ -36,6 +36,16 @@ const passwordReset = [
     .isEmail().withMessage('Email không hợp lệ'),
 ];
 
+const changePasswordWithToken = [
+  body('token')
+    .isString().withMessage('Token là một chuỗi')
+    .isLength({ min: 1 }).withMessage('Token không được để trống'),
+
+  body('new_password')
+    .isString().withMessage('Mật khẩu mới phải là một chuỗi')
+    .isLength({ min: 6 }).withMessage('Mật khẩu mới phải có ít nhất 6 ký tự')
+];
+
 const handleErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -49,5 +59,6 @@ module.exports = {
   register,
   handleErrors,
   verifyCode,
-  passwordReset
+  passwordReset,
+  changePasswordWithToken
 };

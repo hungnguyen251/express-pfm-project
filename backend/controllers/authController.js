@@ -44,3 +44,14 @@ exports.passwordReset = async (req, res) => {
         return responseError400(res, error.message);
     }
 };
+
+exports.changePasswordWithToken = async (req, res) => {
+    try {
+        const { token, new_password } = req.body;
+        await authService.changePasswordWithToken(token, new_password);
+
+        return responseSuccess200(res, 'Thay đổi mật khẩu thành công');
+    } catch (error) {
+        return responseError400(res, error.message);
+    }
+};

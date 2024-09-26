@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const mailService = require('./mailService');
 const { v4: uuidv4 } = require('uuid');
 const PasswordReset = require('../models/passwordResetModel');
+const bcrypt = require('bcryptjs');
 
 exports.registerUser = async (name, email, password) => {
     // Check email existence
@@ -97,5 +98,27 @@ exports.passwordReset = async (email) => {
     const passwordChangeUrl = `${process.env.FRONTEND_URL}/password-reset/${token}`
 
     //Send password reset email
-    return mailService.sendPasswordReset(email, { url: passwordChangeUrl });
+    return mailService.sendPasswordResetRequest(email, { url: passwordChangeUrl });
+}
+
+exports.changePasswordWithToken = async (token, newPassword) => {
+    const checkToken = await PasswordReset.findOne({
+        token: token,
+        expiredAt: { $gt: new Date() }
+    });
+
+    if (!checkToken) {
+        throw new Error('Token không đúng hoặc đã hết hạn');
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    newPassword = await bcrypt.hash(newPassword, salt);
+
+    await User.findOneAndUpdate(
+        { email: checkToken.email },
+        { password: newPassword },
+        { new: true }
+    );
+
+    return mailService.sendPasswordResetConfirmation(checkToken.email);
 }
