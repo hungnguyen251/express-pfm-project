@@ -31,6 +31,11 @@ const verifyCode = [
     .isLength({ min: 1 }).withMessage('Mã xác thực không được để trống')
 ];
 
+const passwordReset = [
+  body('email')
+    .isEmail().withMessage('Email không hợp lệ'),
+];
+
 const handleErrors = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -43,5 +48,6 @@ module.exports = {
   login,
   register,
   handleErrors,
-  verifyCode
+  verifyCode,
+  passwordReset
 };

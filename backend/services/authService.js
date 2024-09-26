@@ -2,6 +2,8 @@ const User = require('../models/userModel');
 const VerifyCode = require('../models/verifyCodeModel');
 const jwt = require('jsonwebtoken');
 const mailService = require('./mailService');
+const { v4: uuidv4 } = require('uuid');
+const PasswordReset = require('../models/passwordResetModel');
 
 exports.registerUser = async (name, email, password) => {
     // Check email existence
@@ -75,4 +77,25 @@ exports.verify2FACode = async (email, code) => {
         access_token: token,
         user: user
     };
+}
+
+exports.passwordReset = async (email) => {
+    const token = uuidv4();
+    const now = new Date();
+    const expiredAt = new Date(now.getTime() + 10 * 60000); // 2 minute
+
+    const passwordReset = await PasswordReset.findOneAndUpdate(
+        { email: email },
+        { token: token, expiredAt: expiredAt },
+        { new: true, upsert: true }
+    );
+    
+    if (!passwordReset) {
+        throw new Error('Password reset failed');
+    }
+
+    const passwordChangeUrl = `${process.env.FRONTEND_URL}/password-reset/${token}`
+
+    //Send password reset email
+    return mailService.sendPasswordReset(email, { url: passwordChangeUrl });
 }

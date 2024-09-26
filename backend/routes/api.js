@@ -12,5 +12,6 @@ router.get('/users', function(req, res, next) {
 router.post('/auth/register', authValidator.register, authValidator.handleErrors, authController.register);
 router.post('/auth/login', authValidator.login, authValidator.handleErrors, authController.login);
 router.post('/auth/verify-code', authValidator.verifyCode, authValidator.handleErrors, authController.verifyCode);
+router.post('/auth/password-reset', authValidator.passwordReset, authValidator.handleErrors, authController.passwordReset);
 
 module.exports = router;

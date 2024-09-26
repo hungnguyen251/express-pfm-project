@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
-const verifyCodeSchema = new mongoose.Schema({
-    code: {
-        type: Number,
+const passwordResetSchema = new mongoose.Schema({
+    token: {
+        type: String,
         required: true,
     },
     expiredAt: {
@@ -16,6 +16,6 @@ const verifyCodeSchema = new mongoose.Schema({
     }
 });
 
-const VerifyCode = mongoose.model('Verify_Code', verifyCodeSchema);
+const PasswordReset = mongoose.model('Password_Reset', passwordResetSchema);
 
-module.exports = VerifyCode;
+module.exports = PasswordReset;

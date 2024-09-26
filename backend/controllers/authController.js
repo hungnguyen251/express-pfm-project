@@ -33,3 +33,14 @@ exports.verifyCode = async (req, res) => {
         return responseError400(res, error.message);
     }
 };
+
+exports.passwordReset = async (req, res) => {
+    try {
+        const { email } = req.body;
+        await authService.passwordReset(email);
+
+        return responseSuccess200(res, 'Xác nhận yêu cầu thành công');
+    } catch (error) {
+        return responseError400(res, error.message);
+    }
+};

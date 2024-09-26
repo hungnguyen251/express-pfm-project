@@ -48,7 +48,22 @@ const send2FACode = (to, context) => {
   return transporter.sendMail(mailOptions);
 };
 
+const sendPasswordReset = (to, context) => {
+  const template = 'password-reset';
+  const subject = 'TCCN - Password Reset';
+  const mailOptions = {
+    from: process.env.MAIL_FROM,
+    to,
+    subject,
+    template,
+    context
+  };
+
+  return transporter.sendMail(mailOptions);
+};
+
 module.exports = {
   sendEmail,
-  send2FACode
+  send2FACode,
+  sendPasswordReset
 };
