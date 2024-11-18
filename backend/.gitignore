@@ -30,3 +30,5 @@ yarn.lock
 **.sample
 #amplify-do-not-edit-end
 package-lock.json
+
+logs

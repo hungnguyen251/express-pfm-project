@@ -1,0 +1,1 @@
+export const EMAIL_PATH_DEFAULT = './src/utils/mail-templates';
