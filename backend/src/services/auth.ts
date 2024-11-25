@@ -6,11 +6,13 @@ import AppError from "../utils/config/error";
 import { HTTP_RESPONSES } from "../utils/http/response";
 import bcryptService from '../utils/helpers/bcrypt';
 import { services } from "../utils/config/typedi";
-import logger from "../utils/config/logger";
+import { logError } from "../utils/config/logger";
 import MailService from "./mail";
 import { EmailSubjectEnum, EmailTemplateEnum, VerificationTypeEnum } from "../utils/enums/common";
 import { v4 as uuidv4 } from 'uuid';
 import { User } from "@prisma/client";
+import { IP_ADDRESS_DEFAULT, LOGIN_ATTEMPTS_KEY_PREFIX, LOGIN_LOCK_TIME, LOGIN_MAX_ATTEMPTS } from "../utils/constants/common";
+import { redisClient } from "../utils/config/redis";
 
 @Service()
 export default class AuthService {
@@ -67,7 +69,8 @@ export default class AuthService {
       };
 
     } catch (error: any) {      
-      logger.error("Error:", error.message);
+      logError(`Error:, ${error}`);
+
       throw new AppError(
         error.statusCode,
         error.message,
@@ -98,6 +101,7 @@ export default class AuthService {
 
   login = async (req: Request) => {
     const payload: IPayloadLogin = req.body;
+    const ip = req.ip || req.socket.remoteAddress || IP_ADDRESS_DEFAULT;
 
     try {
       const verifyUser = await services.prismaMongo.user.findUnique({
@@ -124,10 +128,13 @@ export default class AuthService {
         );
       }
 
+      await this.resetLoginAttempts(ip);
       return await this.sendVerificationCode(payload.email);
 
-    } catch (error: any) {      
-      logger.error("Error:", error.message);
+    } catch (error: any) {
+      await this.increaseLoginAttempts(ip);
+
+      logError(`Error:, ${error}`);
       throw new AppError(
         error.statusCode,
         error.message,
@@ -257,4 +264,20 @@ export default class AuthService {
       { expiresIn: process.env.JWT_TTL }
     );
   }
+
+  increaseLoginAttempts = async (ip: string) => {
+    const key = `${LOGIN_ATTEMPTS_KEY_PREFIX}${ip}`;
+    const attempts = await redisClient.incr(key);
+  
+    if (attempts === 1) {
+      await redisClient.expire(key, LOGIN_LOCK_TIME);
+    }
+  
+    return attempts;
+  };
+
+  resetLoginAttempts = async (ip: string) => {
+    const key = `${LOGIN_ATTEMPTS_KEY_PREFIX}${ip}`;
+    await redisClient.del(key);
+  };
 }
