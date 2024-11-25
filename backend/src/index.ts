@@ -3,6 +3,7 @@ import http from 'http';
 import createApp from './app';
 import logger from './utils/config/logger';
 import { PrismaService } from './services/prisma';
+import { flushRedisDb } from './utils/config/redis';
 
 const startServer = async () => {
   try {
@@ -11,6 +12,8 @@ const startServer = async () => {
 
     const prismaService = new PrismaService()
     await prismaService.connect();
+
+    flushRedisDb();
 
     server.listen(port, () => {
       logger.info(`Server listening on port ${port || '8000'}`);
