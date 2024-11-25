@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import authRoute from './auth';
+import { rateLimiter } from '../middlewares/rate-limiter';
 
 const router = express.Router();
 
@@ -8,6 +9,6 @@ router.get('/', function(req: Request, res: Response) {
   res.json({ title: 'Express' });
 });
 
-router.use('/auth', authRoute);
+router.use('/auth', rateLimiter, authRoute);
 
 export default router;

@@ -17,8 +17,12 @@ export const HTTP_RESPONSES = {
       message: 'Resource not found.',
     },
     ALREADY_EXISTS: {
-      message: 'Already Exists',
       code: 409,
+      message: 'Already Exists',
+    },
+    RATE_LIMIT: {
+      code: 429,
+      message: 'Too many requests. Please try again later.',
     },
     SERVER_ERROR: {
       code: 500,

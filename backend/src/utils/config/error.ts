@@ -8,7 +8,6 @@ export default class AppError<T = undefined> extends Error {
     public data?: T
   ) {
     super(message);
-    console.log(this.statusCode);
     
     this.status = `${statusCode}`.startsWith('4')
       ? 'failed'

@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { HTTP_RESPONSES } from '../utils/http/response';
 import { ResponseStatusEnum } from '../utils/enums/common';
+import { rateLimiter } from './rate-limiter';
 
 const response = (req: Request, res: Response, next: NextFunction) => {
   res.success = (message: string, code: string, data?: object) => {
@@ -57,6 +58,14 @@ const response = (req: Request, res: Response, next: NextFunction) => {
   res.internalServer = (message: string, code: string) => {
     return res.status(HTTP_RESPONSES.ERROR.SERVER_ERROR.code).json({
       status: ResponseStatusEnum.ERROR,
+      message,
+      code,
+    });
+  };
+
+  res.rateLimit = (message: string, code: string) => {
+    return res.status(HTTP_RESPONSES.ERROR.RATE_LIMIT.code).json({
+      status: ResponseStatusEnum.FAILED,
       message,
       code,
     });

@@ -1,4 +1,5 @@
 export {};
+import { rateLimit } from 'express-rate-limit';
 
 declare global {
   namespace Express {
@@ -10,7 +11,8 @@ declare global {
       forbidden(message: string, code: string | number): void;
       badRequest(message: string, code: string | number, data?: object): void;
       notFound(message: string, code: string | number): void;
-  
+      rateLimit(message: string, code: string | number): void;
+
       internalServer(message: string, code: string | number): void;
     }
   }
