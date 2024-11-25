@@ -1,6 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import AppError from "../utils/config/error";
-import logger from "../utils/config/logger";
 import { IBaseResponse } from "../interfaces/common";
 import { ResponseStatusEnum } from "../utils/enums/common";
 import { HTTP_RESPONSES } from './../utils/http/response';
@@ -16,7 +15,7 @@ export const requestNotFound = (req: Request, res: Response, next: NextFunction)
   );
 };
 
-export const requestError = (error: AppError, req: Request, res: Response, next: NextFunction): void => {
+export const requestError = (error: AppError, req: Request, res: Response, next: NextFunction) => {
   const response: IBaseResponse = {
     status: error.status || ResponseStatusEnum.ERROR,
     message: error.message,
@@ -27,6 +26,6 @@ export const requestError = (error: AppError, req: Request, res: Response, next:
     response.data = error.data;
   }
 
-  res.status(error.statusCode || HTTP_RESPONSES.ERROR.SERVER_ERROR.code).json(response);
+  return res.status(error.statusCode || HTTP_RESPONSES.ERROR.SERVER_ERROR.code).json(response);
 };
 
